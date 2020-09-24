@@ -1,0 +1,49 @@
+<% provide(:class_text, 'join') %>
+<% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;閉じる</span>
+      </button>
+      <h1 class="modal-title">出席確認画面</h1>
+    </div>
+    <div class="modal-body">
+    <%= form_with url: join_create_user_path(@user.id),local: true do |f| %>
+      <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>稽古道場</th>
+            <th>稽古クラス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= Date.current %></td>
+            <td><%= f.select :keiko_place,[['伏見道場', '伏見道場'],['田辺道場', '田辺道場'],['宇治教室', '宇治教室'],['ルネサンス山科教室', 'ルネサンス山科教室'],['出稽古', '出稽古']], { include_blank: '選択してください',selected: "#{@user.affiliation}"}, { class: 'form-control' , required: true }%></td>
+            <td><%= f.select :attendance_class,[['少年クラス', '少年クラス'],['一般クラス', '一般クラス'],['選手クラス', '選手クラス'],['朝稽古', '朝稽古']],{ include_blank: '選択してください',selected: "#{@user.department}"}, { class: 'form-control' , required: true }%></td>
+          </tr>
+        </tbody>
+      </table> 
+      <% if Attendance.where(user_id: @user.id,worked_on: Date.today).ids.blank? %>
+        <label class="confirm" style="color:red"><%="#{@user.name}さん、新規追加登録のため、一度ログインしてください"%></label>
+        <div class="row">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+          </div>
+        </div>
+      <% else %>
+        <label class="confirm"><%="#{@user.name}さん、出席でいいですか？"%></label>
+        <div class="row">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <%= f.submit "稽古登録",class: "btn btn-success" %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+    </div>
+  </div>
+</div>

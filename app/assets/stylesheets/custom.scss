@@ -1,0 +1,995 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+/* universal */
+body {
+  padding-top: 60px;
+}
+
+section {
+  overflow: auto;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.center {
+  text-align: center;
+}
+
+.center h1 {
+  margin-bottom: 10px;
+}
+
+.text_sat{
+  color:blue;
+}
+
+.text_sun{
+  color:red;
+}
+
+/* typography */
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1;
+}
+
+h1 {
+  font-size: 3em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: center;
+  background:linear-gradient(transparent 70%, #FFFF00 0%);
+}
+
+h2 {
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: normal;
+  color: #777;
+}
+
+p {
+  font-size: 1.1em;
+  line-height: 1.7em;
+}
+
+.sign{
+  margin-top: 15px;
+}
+
+/* header */
+
+#logo {
+  float: left;
+  margin-right: 10px;
+  font-size: 1.7em;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  padding-top: 9px;
+  font-weight: bold;
+}
+
+#logo:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* debug */
+
+.debug_dump {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 45px;
+  -moz-box-sizing:    border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing:         border-box;
+}
+
+#error_explanation {
+  color: red;
+  ul {
+    color: red;
+    margin: 0 0 30px 0;
+  }
+}
+
+.field_with_errors {
+  @extend .has-error;
+  .form-control {
+    color: $state-danger-text;
+  }
+}
+
+/* モーダル */
+.modal-dialog-center {
+  padding-top: 10%;
+}
+
+.modal-subtitle{
+  font-size: 2em;
+  text-align: center;
+  padding: 40px 0px 0px 0px;
+}
+
+.modal-body-approval{
+  padding: 0px 30px 40px 30px;
+}
+
+.submitbtn
+{
+  padding: 20px 0px;
+}
+
+/* indexのcsv*/
+.input-group{
+  #padding:5px;
+  width: 100%;
+  #border: solid #5B6DCD 10px;
+  #box-sizing: border-box;
+}
+
+/* indexのcs
+.input-group-btn{
+  border: solid;
+}
+*/
+
+.w-25 {
+  width: 25% !important;
+  margin-top:5px; 
+}
+
+/* button :[btn]の色が動作しないため追加 */
+.btn-secondary {
+  @include button-variant($btn-default-color,#BBBBBB,$btn-default-border);
+}
+
+/* 編集ページの注意文言 */
+.edit_notice{
+  text-align: right;  
+}
+
+/* 勤怠修正ログ履歴ボタン */
+.btnlog{
+  margin-bottom: 10px;
+}
+
+/* お知らせ部分 */
+.notice{
+  padding-bottom: 15px;
+  list-style: none;
+  padding-left: 0px;
+}
+
+li.notice-font{
+  font-size: 16px;
+}
+
+/* 月勤怠申請ボタン */
+.submit-btn{
+  margin-top: 5px;
+}
+
+/*フォーム */
+label{
+  margin-top: 5px;
+}
+
+/*ユーザープロフィール変更ボタン位置*/
+.indexupdate{
+  margin-top: 10px;
+}
+
+/*拠点テーブル表の中の文字��置*/
+.text-center-place{
+  padding: 10px 0;
+}
+
+.btn-place{
+  padding: 3px 0;
+}
+
+.btn-place-change{
+  padding: 20px 0;
+}
+
+/*showページの表のヘッダー部分*/
+.user-table{
+  margin-bottom: 10px;
+}
+
+/*勤怠修正ログ承認*/
+.bootstrap-date {
+  display: inline-block;
+  width: auto;
+}
+/*showページ下の注意書き*/
+.show-notice{
+  font-size: 5px;
+  text-align: right;
+}
+
+/*登録ページの入門日*/
+.bootstrap-date {
+  display: inline-block;
+  width: auto;
+}
+
+/*練習出席ボタンのcss*/
+/*検索ボタンのクリアボタン*/
+.clear{
+  display: block;
+  margin: 30px 0 20px 0;
+  width: 80px;
+}
+
+.clear-rank{
+  margin: 0px 10px;
+}
+
+/*出席の表示ボタン*/
+.confirm{
+  font-size: 15px;
+}
+
+/*showのスケジュールボタン*/
+.schedule{
+  margin-top: 10px;
+}
+
+/*会報一覧*/
+.card-bexitody{
+  margin: 10px 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  color: #333;
+  line-height: 1.5;
+  padding: 1rem 2rem;
+}
+
+/*会報一覧タイトル*/
+.post_title{
+  // display: inline-block;
+  width: 100%;
+  height: 30px;
+  /*overflow: scroll;*/
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  /*text-overflow: ellipsis;*/
+  overflow: scroll;
+  /*white-space: nowrap;*/
+  text-align: left;
+  vertical-align:middle;
+  padding: 5px 10px 0 10px;
+}
+
+/*編集ページ*/
+.editimg{
+  margin: 10px;
+}
+
+.box{
+  display:flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+}
+
+.imagefilefield{
+  margin-bottom: 10px;
+}
+
+/*編集ページ*/
+.row_b{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 10px 0px;
+}
+
+.row_b a{
+  font-size: 16px;
+  margin: 0px 5px;
+}
+
+.map_fusimi{
+  margin: 10px 0px 30px 0px;
+}
+
+.map_kidu{
+  margin: 10px 0px 30px 0px;
+}
+
+.map_tanabe{
+  margin: 10px 0px 30px 0px;
+}
+
+.map_yamashina{
+  margin: 10px 0px 30px 0px;
+}
+
+.map_katsuragawa{
+  margin: 10px 0px 30px 0px;
+}
+
+/*TOPページ*/
+.schedule-outer{
+  /*background-color: #8bc6ff;*/
+  position: relative;
+  /*margin-top: 300px;*/
+  height: 300px
+}
+
+.schedule{
+  position: absolute;
+  transform : translate(-50%,-50%);
+  top: 90%;
+  left: 50%;
+}
+
+/*rankページ*/
+.rank{
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.rank th{
+  background-color:#FFBEDA;
+}
+
+.rank tr{
+  border-bottom: solid 2px #eee;
+}
+
+.rank th, .rank td {
+  text-align: center;
+  width: 20%;
+  padding: 5px 0px;
+}
+
+#searchbutton{
+  margin-top: 10px;
+}
+
+#clearbutton{
+  margin-top: 10px;
+}
+
+.radiogroup{
+  transform: scale(1.2);
+  margin-left: 60px;
+}
+
+.labelradio{
+  font-size: 1.4em;
+  margin: 0px 10px 0px 0px;
+}
+
+.center.jumbotron{
+  padding-bottom: 40px;
+  padding-top: 10px;
+  margin-bottom: 0px;
+  background-color: #FFF;
+}
+
+.jumbotron-extend {
+  position: relative;
+  /*height: 50vh;*/
+  /*min-height: 300px;*/
+  background: image-url("kyoto.jpg") no-repeat center center; 
+  background-size: cover;
+  margin-bottom: 20px;
+  padding: 10px 0px;
+  height: 150px;
+}
+
+/*topのタイトル*/
+#apli_title{
+  font-size: 3em;
+  text-align: left;
+  margin-bottom: 0px;
+  color: #333333;
+  font-weight: bold;
+}
+
+.topbutton{
+  padding: 10px 15px;
+  opacity: 0.8;
+  float: left;
+  background-color: #00CCFF;
+  font-weight: bolder;
+  border : solid 1px #FFF ; 
+}
+
+.jumbotron-extend .sign{
+  /*float: left;*/
+  margin-top: 5px;
+}
+
+.login-link{
+  display : inline-block;
+  color : #ffffff;/* 文字の色 */
+}
+
+/* 一覧の名前検索ボタン  */
+.name-serach{
+  margin: 0px 5px;
+}
+/* 一覧の名前検索フォーム */
+.name-form{
+  margin-right: 0px 5px;
+}
+
+/*csvボタン*/
+.csv_submit{
+ margin-bottom: 5px; 
+}
+
+/*csv出力ボタン*/
+.csvbutton{
+  font-weight: bold;
+  font-size: 1.4em;
+}
+
+.index-edit{
+  background-color: #FFCC99;
+  border: thin solid #eb6101;
+}
+
+#showpage_top a{
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+#page_top {
+  position: fixed;/*追従の時の位置固定のため*/
+  right: 180px;
+  bottom: 30px;
+  z-index: 99;/*画面の最前に出る様にするため*/
+}
+
+/*showページの表*/
+.showtable{
+  margin-bottom: 20px;
+}
+
+/*ヘッダーのaタグ*/
+.navbar-right a{
+  font-size: 1.2em;
+}
+
+/*お知らせの文字*/
+.info{
+  font-size: 1.2em;
+  color: red;
+  background-color: rgba(244, 253, 78, 0.4);
+}
+
+/*
+.image-post{
+  width: 600px;
+	height: 50%;
+}
+*/
+
+/*会報のチェック*/
+.ck_box_form .ck_box{
+  transform: scale(1.5);
+  border-radius: 20px;
+  margin: 0px 0px 0px 20px!important;
+}
+
+.ck_box_delete{
+  font-size: 16px;
+  margin-left: 5px;
+}
+
+.ck_box_form{
+  font-size: 16px;
+  padding-top: 5px;
+}
+
+.imagefilefield{
+  margin: 10px 0px;
+}
+
+.indexupdate{
+  margin: 10px 0px;
+}
+
+/*pdfのダウンロードのお知らせ*/
+.pdf_info span{
+ font-weight: bold;
+ color: red;
+ font-size: 1.2em;
+}
+
+.pdfbutton{
+  font-weight: bold;
+  font-size: 1.4em;
+  margin-top: 10px;
+}
+
+.pdf_info{
+  margin-top: 10px;
+}
+
+/*出席者一覧*//*男性ボタン */
+.man-button{
+  background-color: #24d;
+  color: #fff;
+  border-style: none;
+  padding: 20px 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+ /* 背景色を明るい青色に指定 */
+.man-button:hover {
+  background-color: #ffffff;
+  text-decoration: none;
+  padding: 18px 8px;
+  color: #24d;
+  border: solid #24d;
+}
+
+/*出席者一覧*//*女性ボタン */
+.woman-button{
+  background-color: #ff69b4;
+  color: #fff;
+  border-style: none;
+  padding: 20px 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+
+.woman-button:hover{
+  background-color: #ffffff;
+  text-decoration: none;
+  padding: 18px 8px;
+  color: #ff69b4;
+  border: solid #ff69b4;
+}
+
+.row_index{
+  margin-top: 30px;  
+}
+/*topの文字「場」*/
+.apli_title_span{
+  color: #DD0000;
+}
+/*出場ランクページの文字*/
+.rank-size{
+  font-size: 1.1em;
+}
+/*showページの文字*/
+.show-prof{
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.label-pdf{
+  margin: 0px 0px 10px 5px;
+  font-weight: 400px;
+}
+/*showページの通知済みボタン */
+.btn.outline{
+  background: none;
+  color: #337ab7;
+}
+
+.btn.outline:hover{
+  background-color: #337ab7;
+  color: #FFF;
+}
+
+#table-attendances th{
+  border-bottom-width: 3px; 
+}
+/*出席通知ページの通知済みボタン */
+.man-button-outline{
+  background-color: transparent;
+  color: #24d;
+  border: solid #24d;
+  padding: 18px 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+
+.woman-button-outline{
+  background-color: transparent;
+  color: #ff69b4;
+  border: solid #ff69b4;
+  padding: 18px 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+
+.line-png{
+  padding: 10px 0px;
+  text-align: right;
+}
+/*以下、レスポンシブ */
+header .navbar{
+  display: flex;
+  justify-content: space-between;
+  /*background: #ddd;
+  .logo {
+    font-size: 20px;
+  }*/
+}
+.nav .navbar-nav .navbar-right{
+  display: none;
+}
+// .nav {
+//   a {
+//     color: #000;
+//     text-decoration: none;
+//     font-size: 18px;
+//     color: #448aff;
+//   }
+//   li {
+//     display: inline-block;
+//     margin: 0 10px;
+//   }
+//
+.nav-wrap.open {
+  display: block;
+}
+.nav-wrap.close {
+  display: none;
+}
+
+/*タブレット用アクセス地図*/
+@media screen and (max-width: 768px) {
+  
+.schedule{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.schedule iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.schedule-outer{
+  /*background-color: #8bc6ff;*/
+  position: relative;
+  /*margin-top: 300px;*/
+  height: 230px
+}
+
+}
+// 481px以上670px以下、携帯
+@media screen and (min-width: 481px) and (max-width: 670px) {
+  nav .nav-wrap {
+    display: block !important;
+  }
+
+.content {
+  padding: 20px;
+}
+/*アクセスページ*/
+// .row_b{
+//   justify-content: start;
+//   margin: 10px 0px;
+// }
+
+.row_b a{
+  margin: 2px 0px;
+}
+
+// .container{
+//   max-width: 100%;
+// }
+// /*アクセスページの上ボタン*/
+// #page_top{
+//   display: block; 
+//   right: 30px;
+// }
+
+  .nav-button {
+    display: block;
+    cursor: pointer;
+    text-align:right;
+  }
+  .nav-wrap {
+    position: fixed;
+    left: 0;
+    top: 50px;
+    display: none;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    .nav {
+      height: 100%;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    li {
+      display: block;
+      margin: 2em;
+      a {
+        color: #fff!important;
+        font-size: 1.8em;
+      }
+    }
+  }
+  /*メニューボタンのエフェクト*/
+  .nav-button,
+  .nav-button span {
+    display: inline-block;
+    transition: all 0.4s;
+    box-sizing: border-box;
+  }
+  .nav-button {
+    z-index: 20;
+    position: relative;
+    width: 40px;
+    height: 36px;
+  }
+  .nav-button span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+  .nav-button span:nth-of-type(1) {
+    top: 0px;
+  }
+  .nav-button span:nth-of-type(2) {
+    top: 16px;
+  }
+  .nav-button span:nth-of-type(3) {
+    bottom: 0px;
+  }
+  .nav-button.active span:nth-of-type(1) {
+    -webkit-transform: translateY(16px) rotate(-45deg);
+    transform: translateY(16px) rotate(-45deg);
+  }
+  .nav-button.active span:nth-of-type(2) {
+    opacity: 0;
+  }
+  .nav-button.active span:nth-of-type(3) {
+    -webkit-transform: translateY(-16px) rotate(45deg);
+    transform: translateY(-16px) rotate(45deg);
+  }
+}
+
+// 480px以下
+@media screen and (max-width: 480px) {
+  .nav-button {
+    display: block;
+    cursor: pointer;
+    text-align:right;
+  }
+  .nav-wrap {
+    position: fixed;
+    left: 0;
+    top: 50px;
+    display: none;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    .nav {
+      height: 100%;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    li {
+      display: block;
+      margin: 2em;
+      a {
+        color: #fff!important;
+        font-size: 1.8em;
+      }
+    }
+  }
+  /*メニューボタンのエフェクト*/
+  .nav-button,
+  .nav-button span {
+    display: inline-block;
+    transition: all 0.4s;
+    box-sizing: border-box;
+  }
+  .nav-button {
+    z-index: 20;
+    position: relative;
+    width: 40px;
+    height: 36px;
+  }
+  .nav-button span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+  .nav-button span:nth-of-type(1) {
+    top: 0px;
+  }
+  .nav-button span:nth-of-type(2) {
+    top: 16px;
+  }
+  .nav-button span:nth-of-type(3) {
+    bottom: 0px;
+  }
+  .nav-button.active span:nth-of-type(1) {
+    -webkit-transform: translateY(16px) rotate(-45deg);
+    transform: translateY(16px) rotate(-45deg);
+  }
+  .nav-button.active span:nth-of-type(2) {
+    opacity: 0;
+  }
+  .nav-button.active span:nth-of-type(3) {
+    -webkit-transform: translateY(-16px) rotate(45deg);
+    transform: translateY(-16px) rotate(45deg);
+  }
+  
+.schedule-outer{
+  /*background-color: #8bc6ff;*/
+  position: relative;
+  /*margin-top: 300px;*/
+  height: 80px
+}
+
+// 以下、accessのレスポンシブ
+.map_fusimi{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+.map_fusimi iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.map_kidu{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.map_kidu iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.map_tanabe{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.map_tanabe iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.map_yamashina{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.map_yamashina iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.map_katsuragawa{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.map_katsuragawa iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+/*以下、アクセスボタン*/
+.row_b{
+  justify-content: start;
+  margin: 10px 0px;
+}
+
+.row_b a{
+  width: 100%;
+  margin: 2px 0px;
+}
+
+.container{
+  max-width: 100%;
+}
+/*アクセスページの上ボタン*/
+#page_top{
+  display: block; 
+  right: 30px;
+  }
+
+.schedule{
+  position:relative;
+  margin: 10px 0px 30px 0px;
+  width:100%;
+  height:0;
+  padding-top:75%;
+}
+
+.schedule iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+/*以下、投稿ページpost_title*/
+.post_title{
+  // display: inline-block;
+  width: 260px;
+  height: 30px;
+  /*overflow: scroll;*/
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  /*text-overflow: ellipsis;*/
+  // overflow: visible;
+  /*white-space: nowrap;*/
+  text-align: left;
+  vertical-align:middle;
+  padding: 5px 10px 0 10px;
+}
+
+.image-post{
+  max-width: 100%;
+  height: auto;
+}
+.editimg{
+  max-width: 95%;
+  height: auto;
+}
+
+}

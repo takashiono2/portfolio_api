@@ -1,0 +1,296 @@
+class AttendancesController < ApplicationController
+  include AttendancesHelper
+  #protect_from_forgery except: :attendance_params
+  before_action :set_user, only: [:edit_one_month, :update_one_month,:approval_work_info,:approval_work_change_info_update,:log]
+  before_action :set_attendance, only: [:request_work_info,:request_work_info_update]
+  before_action :logged_in_user, only: [:update, :edit_one_month,:update_one_month]
+  before_action :set_one_month, only: [:edit_one_month,:update_one_month,:approval_work_info,:log]#:approval_work_change_info_update,log
+  before_action :admin_or_correct_user, only: [:edit_one_month]#:update_one_month
+  before_action :correct_user, only: [:update_one_month,:edit_one_month]#この中に入れていると入れなくなる:edit,:update,:request_work_info_update
+  
+  UPDATE_ERROR_MSG = "登録に失敗しました。やり直してください。"
+
+  def update
+    @user = User.find(params[:user_id])#Userインスタンスにユーザーのidひもづける
+    @attendance = Attendance.find(params[:id])#Attendanceインスタンスに連番をとってくる
+    # 出勤時間が未登録であることを判定します。
+    if @attendance.started_at.nil?#出勤インスタンスnilじゃないよね？nil（無効）だったらtureを返す
+      if @attendance.update_attributes(started_at: Time.current.change(sec: 0))#updateはすでにあるもの、createは新規につくるもの。インスタンス.update（キー：値）
+        flash[:info] = "おはようございます！"
+      else
+        flash[:danger] = UPDATE_ERROR_MSG
+      end
+    elsif @attendance.finished_at.nil?#退勤インスタンスnilじゃないよね？nil（無効）だったらtureを返す
+      if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
+        flash[:info] = "お疲れ様でした。"
+      else
+        flash[:danger] = UPDATE_ERROR_MSG
+      end
+    end
+    redirect_to @user#redirect_to user_url(@user.id)のこと
+  end
+ 
+  def edit_one_month
+  end
+  
+##########以下、残業申請
+
+  def request_work_info#残業申請モーダル
+  end
+
+  def request_work_info_update#残業申請ボタン押した時
+    ActiveRecord::Base.transaction do
+        if params[:attendance][:superior_id].blank?
+          flash[:danger] = "申請できませんでした。上長を選択してください。"
+          redirect_to @user and return
+        elsif (Attendance.find(params[:id]).started_at.blank? && Attendance.find(params[:id]).finished_at.blank?) && (Attendance.find(params[:id]).last_started_at.present? && Attendance.find(params[:id]).last_finished_at.present?)#登録忘れからの実績時間があれば登録できる
+          @attendance.approval = "申請中"
+          @attendance.update_attributes(overwork_params)
+          flash[:success] = "#{User.find(@attendance.superior_id).name}に#{l((Attendance.find(@attendance.id).worked_on), format: :short)}の残業申請しました"
+          redirect_to @user
+        elsif (Attendance.find(params[:id]).started_at.blank? && Attendance.find(params[:id]).finished_at.blank?)||(Attendance.find(params[:id]).started_at.blank? && Attendance.find(params[:id]).last_started_at.blank?) && (Attendance.find(params[:id]).finished_at.blank? && Attendance.find(params[:id]).last_finished_at.blank?)#実績時間がないのに申請できない様にする
+          flash[:danger] = "実績時間に記録がないので、申請できませんでした。"
+          params[:attendance][:superior_id]=nil
+          redirect_to @user and return
+        elsif params[:attendance][:schedule_overtime].blank? && params[:attendance][:superior_id].present?
+          flash[:danger] = "申請できませんでした。変更時間を入力してください。"
+          params[:attendance][:superior_id]=nil
+          redirect_to @user and return
+        elsif params[:attendance][:superior_id].present?
+          @attendance.approval = "申請中"
+          @attendance.update_attributes(overwork_params)
+          flash[:success] = "#{User.find(@attendance.superior_id).name}に#{l((Attendance.find(@attendance.id).worked_on), format: :short)}の残業申請しました"
+          redirect_to @user
+        end
+    rescue ActiveRecord::RecordInvalid
+          flash[:danger] = UPDATE_ERROR_MSG
+    end
+  end
+
+  def approval_work_info#残業申請のお知らせモダール
+
+    @n_users_id = []
+    @notice_users = User.where(id: Attendance.where(approval: "申請中",superior_id: current_user.id).select(:user_id))
+    @notice_users.each do |notice_user|
+      @n_users_id << notice_user.id
+    end
+  end
+
+  def approval_work_info_update#残業申請承認
+    ActiveRecord::Base.transaction do
+        attendance_params.each do |id, item|#レコード、パラメータ
+          if params[:check].blank?
+            flash[:danger] = "更新できませんでした。チェックボタンにチェックを入れて更新してください。"
+            redirect_to user_url(current_user.id) and return
+          elsif params[:check].present?
+            if params[:check][id]== ["1"]
+              attendance = Attendance.find(id)
+                if item["approval"] == "承認" || item["approval"] == "否認"
+                  attendance.edit_superior_id = attendance.superior_id
+                  attendance.superior_id = nil
+                  attendance.update_attributes!(item)
+                elsif item["approval"] == "なし"
+                  attendance.superior_id = nil
+                  attendance.update_attributes!(item)
+                elsif item["approval"] == "申請中"#更新なし
+                  attendance.update_attributes!(item)
+                end
+            end
+          end
+        end
+    end
+      flash[:success] = "更新されました"
+      redirect_to user_url(current_user.id)
+  rescue ActiveRecord::RecordInvalid
+      flash[:danger] = "更新できませんでした"
+      render :back
+  end
+
+###########以下、勤務編集申請
+
+  def update_one_month#勤務編集申請
+@applying_count = []
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      attendances_params.each do |id, item|
+        attendance = Attendance.find(id)
+          next unless item["applying_superior_id"].present?#申請idがなかったらとばす
+
+          if (item["started_at"].blank? && item["finished_at"].blank?) && (item["applying_started_at"].blank? && item["applying_finished_at"].blank?) #初回出勤前に申請する
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#0(全く数字が入っていない)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+          
+          elsif (attendance.applying_started_at.blank? && attendance.applying_finished_at.blank?) && ((item["started_at"].blank? && item["finished_at"].present?) || (item["finished_at"].blank? && item["started_at"].present?))#片方の時間がない場合（初回のみ）
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#1(片側が空欄の場合)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+          
+          elsif (item["started_at"].present? && item["finished_at"].present?) && (item["started_at"].to_time > item["finished_at"].to_time) && item["edit_next_day"] == "false"#退勤時間が出社より早い場合（初回のみ）
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+
+          elsif (attendance.started_at.present? && attendance.finished_at.present?) && (item["started_at"].present? && item["finished_at"].blank?) || (item["started_at"].blank? && item["finished_at"].present?)#初回の後の申請なしをうけて片方がなし申請場合
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#3(片側が空欄の場合)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+
+          elsif (item["started_at"].present? || item["finished_at"].present?) && (item["applying_started_at"].blank? && item["applying_finished_at"].blank?)# && (item["applying_started_at"].to_time < item["applying_finished_at"].to_time)#最初の申請あり、２回目以降
+              attendance.applying_started_at = item["started_at"]#最初、申請時間がない。飛んできた時間を申請時間に。
+              attendance.applying_finished_at = item["finished_at"]#最初、申請時間がない。飛んできた時間を申請時間に。
+              attendance.last_started_at = attendance.started_at
+              attendance.last_finished_at = attendance.finished_at
+              item["started_at"] = attendance.last_started_at#戻さないと、変更したstarted_atデータが保存される
+              item["finished_at"] = attendance.last_finished_at#戻さないと、変更したfinished_atデータが保存される
+              attendance.edit_applying_approval = "申請中"
+
+          elsif item["applying_started_at"].blank? && item["applying_finished_at"].blank? && attendance.last_finished_at.present? #過去に申請しているのに、片方しか時間入力がない時
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#4(片側が空欄の場合)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+              
+          #elsif (item["applying_started_at"].blank? || item["applying_finished_at"].blank?) && item["edit_next_day"]=="false"
+              #flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#6(片側が空欄の場合)
+              #attendance.applying_superior_id = nil
+              #redirect_to user_url(date: params[:date])and return
+
+          elsif attendance.applying_started_at.present? && attendance.applying_finished_at.present? && (item["applying_started_at"].present? && item["applying_finished_at"].blank?) || (item["applying_started_at"].blank? && item["applying_finished_at"].present?)#申請２回め以降片方が空
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#5(申請後に再申請で片方がない)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+
+          elsif (item["applying_started_at"].present? && item["applying_finished_at"].present?) && (item["applying_started_at"].to_time > item["applying_finished_at"].to_time) && item["edit_next_day"]=="true"#申請で終了時間の数が小さいけど深夜のとき
+              attendance.edit_applying_approval = "申請中"
+              attendance.applying_started_at = item["applying_started_at"]
+              attendance.applying_finished_at = item["applying_finished_at"]
+              attendance.applying_finished_at = "true"
+              attendance.edit_applying_superior_id = nil#申請idは残したまま、最終申請idはnilに
+              
+          elsif item["applying_started_at"].blank? && item["applying_finished_at"].blank?#最初の申請の場合、applying_started_atはない
+              attendance.applying_started_at = item["started_at"]#最初、申請時間がない。飛んできた時間を申請時間に。
+              attendance.applying_finished_at = item["finished_at"]#最初、申請時間がない。飛んできた時間を申請時間に。
+              attendance.last_started_at = attendance.started_at
+              attendance.last_finished_at = attendance.finished_at
+              item["started_at"] = attendance.last_started_at#戻さないと、変更したstarted_atデータが保存される
+              item["finished_at"] = attendance.last_finished_at#戻さないと、変更したfinished_atデータが保存される
+              attendance.edit_applying_approval = "申請中"
+
+          elsif item["applying_started_at"].present? && item["applying_finished_at"].present? && (item["applying_started_at"].to_time > item["applying_finished_at"].to_time)#退勤時間が出社より早い場合
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"#6(退勤の方がはやい)
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+              
+          elsif item["applying_started_at"].blank? && item["applying_finished_at"].blank?
+              flash[:danger] = "時間入力が正しくないので、申請できませんでした。"
+              attendance.applying_superior_id = nil
+              redirect_to user_url(date: params[:date])and return
+              
+          elsif (attendance.edit_applying_approval=="承認"||attendance.edit_applying_approval=="否認") && (item["applying_started_at"].present? || item["applying_finished_at"].present?)#一度承認、否認から再度申請の場合
+              attendance.edit_applying_approval = "申請中"
+              attendance.applying_started_at = item["applying_started_at"]
+              attendance.applying_finished_at = item["applying_finished_at"]
+              attendance.edit_applying_superior_id = nil#申請idは残したまま、最終申請idはnilに
+          end
+        attendance.update_attributes!(item)
+        @applying_count << item["applying_superior_id"]
+      end
+    end
+    if @applying_count.count==0
+      flash[:danger] = "勤怠申請できませんでした。更新されていないので、指定先を見直してください"
+      redirect_to user_url(date: params[:date])#問題なかった時の処理。キーをdateとしたパラメータのurlへ
+    elsif @applying_count
+      flash[:success] = "勤怠編集を申請しました。#{@applying_count.count}件、申請中です。"
+      redirect_to user_url(date: params[:date])#問題なかった時の処理。キーをdateとしたパラメータのurlへ
+    end
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました"#例外処理
+    redirect_to attendances_edit_one_month_user_url(date: params[:date])
+  end
+ 
+  def approval_work_change_info#勤務編集モーダル立ち上げ
+    @user = User.find(params[:id])
+    
+    @applying_change_users_ids = []
+    #@applying_change_users = User.where(id: Attendance.where(edit_applying_approval: "申請中").select(:user_id))
+    @applying_change_users = User.where(id: Attendance.where(edit_applying_approval: "申請中",applying_superior_id: current_user.id).select(:user_id))
+    @applying_change_users.each do |applying_change_user|
+      @applying_change_users_ids << applying_change_user.id
+    end
+  end
+
+  def approval_work_change_info_update#勤務編集返事
+  ActiveRecord::Base.transaction do
+      approval_work_change_info_update_attendance_params.each do |id, item|#レコード、パラメータ
+        if params[:check].blank?
+          flash[:danger] = "更新できませんでした。チェックボタンにチェックを入れて更新してください。"
+          redirect_to user_url(current_user.id) and return
+        elsif params[:check].present?
+          if params[:check][id]== ["1"]
+            attendance = Attendance.find(id)
+            if item["edit_applying_approval"] == "なし" || item["edit_applying_approval"] == "否認"
+              attendance.edit_applying_superior_id = attendance.applying_superior_id
+              attendance.applying_superior_id = nil
+            elsif item["edit_applying_approval"] == "承認"
+              attendance.edit_applying_superior_id = attendance.applying_superior_id
+              attendance.applying_superior_id = nil
+              attendance.last_started_at = attendance.applying_started_at
+              attendance.last_finished_at = attendance.applying_finished_at
+            end
+          attendance.update_attributes!(item)
+          end
+        end
+      end
+    end
+      flash[:info] = "更新されました"
+      redirect_to user_url(current_user.id)
+  rescue ActiveRecord::RecordInvalid
+      flash[:info] = "更新されませんでした"
+      render :back
+  end
+  
+  def log#検索ボタンチェック時のアクション
+
+    if params[:worked_on].present?
+      year = params[:worked_on]["(1i)"].to_i 
+      month = params[:worked_on]["(2i)"].to_i 
+      day = params[:worked_on]["(3i)"].to_i
+      @first_day = Time.mktime(year,month,day).to_date
+      @last_day = @first_day.end_of_month
+      @attendances = Attendance.where(worked_on: @first_day..@last_day).order(:worked_on).where.not(last_started_at: nil).where.not(last_finished_at: nil)
+    #elsif params[:worked_on]==nil
+      #redirect_to user_url(current_user.id)
+      #flash[:danger]="選択してください"
+    end
+  end
+
+  private
+        
+    def overwork_params#残業申請した時のパタメータ
+      params.require(:attendance).permit(:schedule_overtime,:next_day,:work_content,:superior_id) 
+    end
+    
+    
+    def attendances_params#勤怠編集申請
+      params.require(:user).permit(attendances: [:started_at,:finished_at,:superior_id,:edit_next_day,:work_content,:applying_superior_id,:note,:applying_started_at,:applying_finished_at,:edit_applying_approval,:last_started_at,:last_finished_at,:edit_applying_superior_id])[:attendances]
+      #params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
+
+    def admin_or_correct_user
+      @user = User.find(params[:user_id]) if @user.blank?#@userは空ではないならユーザーidを持って
+      unless current_user?(@user) || current_user.admin?#今ログインユーザーが入っていきたユーザーならtrueもしくは管理者ならtrueでないなら（どっちもtrueでないなら）
+        flash[:danger] = "編集権限がありません。"
+        redirect_to(root_url)
+      end  
+    end
+    
+    def attendance_params#残業申請認証
+      params.require(:user).permit(attendances: [:approval])[:attendances]#[:attendances]がidを明示しているので、idが入ってくる
+      #params.permit(attendances: [:approval])[:attendances]#[:attendances]がidを明示しているので、idが入ってくる
+    end
+    
+    def approval_work_change_info_update_attendance_params
+      #params.require(:user).permit(attendances: [:edit_applying_approval])[:attendance]
+      params.require(:user).permit(attendances: [:edit_applying_approval,:applying_superior_id,:applying_started_at,:applying_finished_at,:started_at,:finished_at,:applying_approval])[:attendances]
+    end
+
+end

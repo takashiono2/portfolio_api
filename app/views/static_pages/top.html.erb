@@ -1,0 +1,24 @@
+<% provide(:title, "Top") %>
+<div class="center jumbotron">
+  <div class="container-fluid">
+    <div class="jumbotron jumbotron-extend">
+      <p id="apli_title">道<span class="apli_title_span">場</span>通信</p>
+      <% if logged_in? && current_user.admin? %>
+        <%= link_to "#{User.find(current_user.id).name} でログイン中", users_path, class: "btn btn-lg btn-primary topbutton" %>
+      <% elsif logged_in? && !current_user.admin? %>
+        <%= link_to "#{User.find(current_user.id).name} でログイン中", user_path(current_user.id), class: "btn btn-lg btn-primary topbutton" %>
+      <% else %>  
+        <%= link_to "ログイン", login_path, class: "btn btn-lg btn-primary topbutton" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+  <div class="schedule-outer">
+    <div class="schedule">  
+      <iframe src="https://calendar.google.com/calendar/embed?src=20gta0oth9rl0djd22rljileu4%40group.calendar.google.com&ctz=Asia%2FTokyo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+      <div class="line-png">
+        <a href="https://lin.ee/0vPe4SM"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36" border="0"></a>
+      </div>
+    </div>
+  </div>

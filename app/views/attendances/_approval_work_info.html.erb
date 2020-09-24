@@ -1,0 +1,75 @@
+<% provide(:class_text, 'approval-info') %>
+<% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;閉じる</span>
+      </button>
+      <h1 class="modal-title">【<%="お知らせ"%>】</h1>
+    </div>
+            
+    <div class="modal-body-approval">
+      <%= form_with(model: @user,url: attendances_approval_work_info_update_user_path(current_user.id), local: true, method: :patch) do |f| %>
+          <div class="row">
+            <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+              <thead>
+                <tr>
+                  <th width="100">日付</th>
+                  <th width="100">曜日</th>
+                  <th>イベント名</th>
+                  <th width="150">参加内容</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <% @note_attendance.each do |day| %>
+                  <% if l(day.worked_on, format: :short).include?(l(@attendance.worked_on, format: :short)) %>
+                    <%= f.fields_for "attendances[]", day do |attendance| %>
+                      <tr>
+                        <td><%= l(@attendance.worked_on, format: :short) %><%#= day.id%></td>
+                        <td>
+                          <% if $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[0] %>
+                            <span class="text_sun"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                          <% elsif $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[6]  %>
+                            <span class="text_sat"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                          <% else %>
+                            <%= $days_of_the_week[@attendance.worked_on.wday] %>
+                          <% end%>
+                        </td>
+                        <td>
+                            <%= day.note %>
+                        </td>
+                        <% if @attendance.applying.present? %>
+                          <td><%= @attendance.applying %></td>
+                        <% else %>
+                          <td><%= attendance.select :applying, [['出場選手','出場選手'],['会場スタッフ','会場スタッフ']],{include_blank: true},{class: "form-control" }%></td>
+                        <% end %>
+                      </tr>
+                    <% end %><!--fieidforのend-->
+                  <% end %>
+                <% end %>
+                
+              </tbody>
+            </table>
+            <p class="text-right"><%= "参加希望者のみ通知してください" if @attendance.applying.blank? %></p>
+          </div>
+          <% if @attendance.applying.blank? %> 
+            <div>
+              <%= f.submit "【通知】通知したら変更できません。",class: "btn btn-primary btn-lg btn-block" %>
+            </div>
+          <% end %>
+      <% end %><!--form_withのend-->
+      
+      <%= link_to 'PDF Download', download_user_attendance_path(@user_admin_id,@attendance_day_id),method: :get,target: :_blank,class: "btn btn-primary pdfbutton" if (Attendance.find(@attendance_day_id).image.present? && Attendance.find(@attendance_day_id).worked_on >= Date.current) %><!--if Attendance.find(@attendance.id).image.present?-->
+      <% if Attendance.find(@attendance_day_id).image.present? && Attendance.find(@attendance_day_id).worked_on >= Date.current %>
+        <p class="pdf_info">
+          <span><%= "「#{Attendance.find(@attendance_day_id).image.identifier}」"%></span>があります。イベント当日までダウンロード可能。
+        </p>
+      <% end %>
+    
+    </div>
+  </div>
+</div>

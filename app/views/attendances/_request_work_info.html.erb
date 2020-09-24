@@ -1,0 +1,59 @@
+<% provide(:class_text, 'request-info') %>
+<% provide(:button_text, '変更を送信する') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;閉じる</span>
+      </button>
+      <h1 class="modal-title">イベント連絡</h1>
+    </div>
+    
+    <div class="modal-body">
+      <div class="row">
+          <%= form_with(model: @attendance, url: attendances_request_work_info_update_user_attendance_path(@user,@attendance),local: true,method: :patch,multipart: true) do |f| %>
+            <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>曜日</th>
+                  <th>イベント名</th>
+                  <th>削除</th>
+                </tr>
+                <tr>
+                  <td><%= l(@attendance.worked_on, format: :short) %></td>
+                  <td>
+                    <% if $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[0] %>
+                      <span class="text_sun"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                    <% elsif $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[6]  %>
+                      <span class="text_sat"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                    <% else %>
+                      <%= $days_of_the_week[@attendance.worked_on.wday] %>
+                    <% end%>
+                  </td>
+                  <td><%= f.text_field :note ,placeholder:"大会名、イベントを入力（50文字以内）",class: "form-control" %></td>
+                  <td>
+                    <%= check_box_tag "check[#{@attendance.id}][]",true,false,{} %>
+                  </td>
+                </tr>
+              </thead>
+            </table>
+              <div class="form-group">
+                <div class="col-sm-12">
+                  <label class="label-pdf">pdfファイルが添付できます <span>[5MBまで]</span></label>
+                    <%= f.file_field :image, accept: 'application/pdf'%>
+                </div>
+                <p class="col-sm-12" style="color:red; margin-top:10px;"><%= "「#{Attendance.find(@attendance.id).image.identifier}」がアップロード済みです" if Attendance.find(@attendance.id).image.present? %></>
+              </div>
+              <div>
+                <%= f.submit "イベント登録", class: "btn btn-primary btn-lg btn-block" %>
+              </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<% provide(:title, '会報新規作成') %>
+<% provide(:button_text, '新規作成') %>
+<h1>会報新規作成</h1>
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+  <%= form_with(model: @post, multipart: true,local: true) do |f| %>
+    <%= render 'shared/error_messages', model: @post%>
+  
+    <%= f.label :post_num %><%="（一覧に表示済みの番号は登録できません。また、一覧は作成順になります）"%>
+    <%= f.number_field :post_num, class: "form-control",min: 1, max: 999%>
+    
+    <%= f.label :post_title %>
+    <%= f.text_field :post_title, class: "form-control" %>
+  
+    <%= f.label :post_note %>
+    <%= f.text_area :post_note, class: "form-control" %>
+
+        <%= f.fields_for :thumbnails do |thumb| %><!--"thumbnails[]"はname="post[thumbnails][1][image]"-->
+          <%= f.label :"画像 #{thumb.index+1} "%><%=" [5MBまで]" %>
+          <%= thumb.file_field :image,multipart: true, accept: 'image/jpeg,image/gif,image/png' %>
+          <%= thumb.hidden_field :id %>
+        <% end %>
+    <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)} indexupdate" %>
+  <% end %>
+  </div>
+</div>

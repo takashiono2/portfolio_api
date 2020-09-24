@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <%= form_with(model: @user, local: true) do |f| %>
+      <!--%= render 'shared/error_messages', object: @user %-->
+      <%= render 'shared/error_messages', model: @user%>
+    
+      <%= f.label :name,"名前", class: "label-#{yield(:class_text)}" %>
+      <%= f.text_field :name, class: "form-control" %>
+    
+      <%= f.label :email,"メール", class: "label-#{yield(:class_text)}" %>
+      <%= f.email_field :email, class: "form-control" %>
+  <% unless @user.admin? %>    
+      <%= f.label :uid,"会員番号", class: "label-#{yield(:class_text)}" %>
+      <%= f.text_field :uid, class: "form-control" %>
+    
+      <%= f.label :affiliation,"所属道場", class: "label-#{yield(:class_text)}"%>
+      <%= f.select :affiliation, [['伏見道場', '伏見道場'],['田辺道場', '田辺道場'],['宇治教室', '宇治教室'],['ルネサンス山科教室', 'ルネサンス山科教室']],{ include_blank: '選択してください'}, { class: 'form-control' , required: true } %>
+    
+      <%= f.label :department,"クラス", class: "label-#{yield(:class_text)}"%>
+      <%= f.select :department, [['一般クラス', '一般クラス'],['少年クラス', '少年クラス']],{ include_blank: '選択してください'}, { class: 'form-control' , required: true } %>
+  
+      <div><%= f.label :registration_day,"入門日 (年/月/日)", class: "label-#{yield(:class_text)}"%></div>
+      <div>
+      <%= f.date_select :registration_day,
+              {start_year: 1990, end_year: Time.now.year, use_month_numbers: true, date_separator: '/'},
+              {class: 'form-control bootstrap-date'}
+      %>
+      </div>
+      <%= f.label :status, "階級",class: "label-#{yield(:class_text)}"%>
+      <%= f.select :status,[['3段','3段'],['2段','2段'],['初段','初段'],['1級','1級'],['2級','2級'],['3級','3級'],['4級','4級'],['5級','5級'],['6級','6級'],['7級','7級'],['8級','8級'],['9級','9級'],['10級','10級']],{ include_blank: '選択してください'}, { class: 'form-control' , required: true } %>
+  
+      <%= f.label :gender,"性別", class: "label-#{yield(:class_text)}"%>
+      <%= f.select :gender, [['男性', '男性'],['女性', '女性']],{ include_blank: '選択してください'}, { class: 'form-control' , required: true } %>
+  <% end %>    
+      <%= f.label :password,"パスワード", class: "label-#{yield(:class_text)}" %>
+      <%= f.password_field :password, class: "form-control" %>
+    
+      <%= f.label :password_confirmation,"パスワード", class: "label-#{yield(:class_text)}" %>
+      <%= f.password_field :password_confirmation, class: "form-control" %>
+    
+      <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)} indexupdate" %>
+    <% end %>
+  </div>  
+</div>

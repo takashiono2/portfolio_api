@@ -1,0 +1,82 @@
+<% provide(:title, @user.name) %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;閉じる</span>
+      </button>
+      <h1 class="modal-title">状況確認</h1><%= link_to "CSV出力",csv_index_user_path(format: :csv,attendance_id: @attendance.id) ,class: "btn btn-primary csvbutton"%>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+
+            <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>曜日</th>
+                  <th>イベント名</th>
+                </tr>
+                <tr>
+                  <td><%= l(@attendance.worked_on, format: :short) %></td>
+                  <td>
+                    <% if $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[0] %>
+                      <span class="text_sun"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                    <% elsif $days_of_the_week[@attendance.worked_on.wday] == $days_of_the_week[6]  %>
+                      <span class="text_sat"><%= $days_of_the_week[@attendance.worked_on.wday] %></span>
+                    <% else %>
+                      <%= $days_of_the_week[@attendance.worked_on.wday] %>
+                    <% end%>
+                  </td>
+                  <td><%= @attendance.note %></td>
+                </tr>
+              </thead>
+            </table>
+      <% if @rep_attendance.where(applying: "出場選手").count > 0%>      
+        <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+            <p><%= "[出場選手] #{@rep_attendance.where(applying: "出場選手").count}人"%></p>     
+                <thead>
+                  <tr>
+                    <th width="25%">名前</th>
+                    <th width="25%">所属</th>
+                    <th width="25%">クラス</th>
+                    <th width="25%">階級</th>
+                  </tr>
+                </thead>
+          <% @rep_attendance.each do |rep| %>
+            <% if rep.applying == "出場選手" %>
+                  <tr>
+                    <td><%= User.find(rep.user_id).name %></td><!--その日のapplyingがある人のユーザー情報-->
+                    <td><%= User.find(rep.user_id).affiliation %></td><!--その日のapplyingがある人-->
+                    <td><%= User.find(rep.user_id).department %></td>
+                    <td><%= User.find(rep.user_id).status %></td>
+                  </tr>
+            <% end %>
+          <% end %>
+        </table>
+      <% end %>
+        
+      <% if @rep_attendance.where(applying: "会場スタッフ").count > 0%>  
+        <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+              <p><%= "[会場スタッフ] #{@rep_attendance.where(applying: "会場スタッフ").count}人"%></p>
+                <thead>
+                  <tr>
+                    <th width="50%">名前</th>
+                    <th>所属</th>
+                  </tr>
+                </thead>
+          <% @rep_attendance.each do |rep| %>
+            <% if rep.applying == "会場スタッフ" %>
+                  <tr>
+                    <td><%= User.find(rep.user_id).name %></td>
+                    <td><%= User.find(rep.user_id).affiliation %></td>
+                  </tr>
+              <% end %>
+          <% end %>
+        </table>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

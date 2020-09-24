@@ -1,0 +1,16 @@
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/aliyun-sdk-0.8.0/ext/crcx
+/home/ec2-user/.rvm/rubies/ruby-2.6.3/bin/ruby -I /home/ec2-user/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0 -r ./siteconf20200903-4700-1473n01.rb extconf.rb
+creating Makefile
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/aliyun-sdk-0.8.0/ext/crcx
+make "DESTDIR=" clean
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/aliyun-sdk-0.8.0/ext/crcx
+make "DESTDIR="
+compiling crc64_ecma.c
+compiling crcx.c
+linking shared-object aliyun/crcx.so
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/aliyun-sdk-0.8.0/ext/crcx
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 crcx.so ./.gem.20200903-4700-xs3tvk/aliyun

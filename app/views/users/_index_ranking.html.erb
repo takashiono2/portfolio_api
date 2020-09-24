@@ -1,0 +1,27 @@
+
+  <% users.each_with_index do |user,i| %>
+    <tr>
+      <td class="rank-size">
+<!--順位を表す変数@i-->
+<!--前ループのスコアusers.values[i-1]-->
+<!--users.values[i-1] == users.values[i]ならば、@iを表示-->
+<!--でなければ@iを進める@i=@i+1-->
+<!--users.values[i-1] == users.values[i]--として次に備える-->
+          <% @i = i+1 %>
+        <% if (users.values[i-1] == users.values[i]) && (users.values[i] != users.values[i+1]) %><!--前のスコアと今のスコアが同じなら同じ、次の値が違うなら値なら表示しない-->
+          <%=  %>
+        <% elsif (users.values[i-1] == users.values[i]) && (users.values[i] == users.values[i+1]) %><!--前のスコアと今のスコア、次のスコアが同じ>
+          <%=  %>
+        <% elsif (users.values[i] != users.values[i+1]) %><!--今のスコアと次のスコアが違うなら表示する-->
+          <%= @i %>
+        <% elsif users.values[i] == users.values[i+1] %><!--今のスコアと次のスコアが同じなら同じ値を表示する。これがないと同じスコア群の順はじめが表示されない-->
+          <%= @i %>
+        <% end %><%# @i = i+2 %><!--同じだったら最後の順位だけ表示-->
+      </td>
+      <td class="rank-size"><%= "#{User.find(user[0]).name}" %></td>
+      <td class="rank-size"><%= User.find(user[0]).affiliation %></td>
+      <td class="rank-size"><%= User.find(user[0]).department %></td>
+      <td class="rank-size"><%= user[1] %></td>
+    </tr>
+    <% break if i== 9 %><!--10位（10回）-->
+  <% end %>

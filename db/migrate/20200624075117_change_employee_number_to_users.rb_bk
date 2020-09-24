@@ -1,0 +1,5 @@
+class ChangeEmployeeNumberToUsers < ActiveRecord::Migration[5.1]
+  def change
+    change_column :users, :employee_number, :integer, default: User.id
+  end
+end

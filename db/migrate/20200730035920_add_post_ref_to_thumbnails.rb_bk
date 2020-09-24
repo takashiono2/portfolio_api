@@ -1,0 +1,5 @@
+class AddPostRefToThumbnails < ActiveRecord::Migration[5.1]
+  def change#以下を一度オフにして保存して復活させる
+    #add_reference :thumbnails, :post, foreign_key: true
+  end
+end

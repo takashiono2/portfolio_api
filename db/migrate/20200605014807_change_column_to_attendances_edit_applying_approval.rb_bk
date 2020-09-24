@@ -1,0 +1,9 @@
+class ChangeColumnToAttendancesEditApplyingApproval < ActiveRecord::Migration[5.1]
+  def up
+    change_column :attendances, :edit_applying_approval, :integer
+  end
+
+  def down
+    change_column :attendances, :edit_applying_approval, :integer ,default: 0, null: false, limit: 1
+  end
+end

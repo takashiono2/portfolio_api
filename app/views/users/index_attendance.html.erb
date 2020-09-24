@@ -1,0 +1,72 @@
+<% provide(:title, "稽古出席") %>
+<h1>稽古出席ページ</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div><!--サイドスペース用-->
+      <div class="col-md-4">
+        <%= form_with(scope: :user, url: index_attendance_users_path, method: :get,local: true)do |f| %><!--ボタンを押すとsearchアクションへ,remote:trueでajaxa-->
+          <table>
+              <tr>
+                  <th><%= label :user,:所属 %></th>
+                  <th><%= label :user,:クラス %></th>
+              </tr>
+              <tr>
+                  <td><%= f.select :affiliation,[['伏見道場', '伏見道場'],['田辺道場', '田辺道場'],['宇治教室', '宇治教室'],['ルネサンス山科教室', 'ルネサンス山科教室']],{},{ class: "form-control" , required: true }%></td>
+                  <td><%= f.select :department,[['一般クラス', '一般クラス'],['少年クラス', '少年クラス']],{},{ class: "form-control" , required: true } %></td>
+              </tr>
+              <tr>
+                <td><div class="actions"><%= f.submit '検索',:name => nil,class: "btn btn-dark search_button" %></div></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+          </table>
+        <% end %>
+      </div>  
+
+      <div class="col-md-2">
+          <%= form_with(scope: :user, url: index_attendance_users_path, method: :get, local: true) do |f| %>
+            <table>
+                <tr>
+                  <th><%= label :user,:名前 %></th>
+                </tr>
+                <tr>
+                  <td>
+                    <%= f.text_field :name ,class: "form-control" %>
+                    <%= f.submit '検索' ,class: "btn btn-dark search_button" %>
+                  </td>
+                </tr>
+            </table>
+          <% end %>
+      </div>
+
+        <div class="col-md-1">
+          <%= link_to 'クリア', index_attendance_users_path,class: 'btn btn-success clear' %>
+        </div>
+    <div class="col-md-3"></div><!--サイドスペース用-->
+  </div>
+
+    <div class="row_index">
+      <div class="col-md-1"></div>
+        <div class="col-md-10">
+        <p class="club"><b>会員一覧</b></p>
+          <% @users.each do |user| %>
+              <span class="attendance-button">
+                <% if Attendance.where(user_id: user.id,worked_on: Date.current).where.not(attendance_class: nil).where.not(keiko_place: nil).blank? %><!--通常-->
+                  <%= link_to user.name,join_user_path(user.id),remote: true, class: "btn man-button" if user.gender=="男性" %>
+                  <%= link_to user.name,join_user_path(user.id),remote: true, class: "btn woman-button" if user.gender=="女性" %>
+                <% elsif Attendance.where(user_id: user.id,worked_on: Date.current).where.not(attendance_class: nil).where.not(keiko_place: nil).present? %><!--出席したら-->
+                  <%= link_to user.name,join_user_path(user.id),remote: true, class: "btn man-button-outline" if user.gender=="男性" %>
+                  <%= link_to user.name,join_user_path(user.id),remote: true, class: "btn woman-button-outline" if user.gender=="女性" %>
+                <% end %>
+              </span> 
+          <% end %>
+        </div>
+      <div class="col-md-1"></div>
+    </div>
+
+</div>
+<div class="modal fade" id="join" tabindex="-1" role="dialog" aria-hidden="true"></div>

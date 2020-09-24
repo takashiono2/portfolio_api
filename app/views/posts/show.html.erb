@@ -1,0 +1,24 @@
+<% provide(:title, '会報詳細') %>
+<% provide(:class_text, 'signup') %>
+<% provide(:button_text, '戻る') %>
+<h1>会報新規作成</h1>
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+  <%= form_with(model: @post, local: true) do |f| %>
+
+  <%= f.label :no %>
+  <%#= f.label :title, class: "label-#{yield(:class_text)}" %>
+  <%= f.number_field :post_num, class: "form-control",min: 1, max: 999, :readonly => true%>
+  
+  <%= f.label :title %>
+  <%#= f.label :title, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :post_title, class: "form-control",:readonly => true %>
+
+  <%= f.label :content %>
+  <%#= f.label :content, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_area :post_note, class: "form-control",:readonly => true %>
+  
+  <% end %>
+  </div>
+</div>

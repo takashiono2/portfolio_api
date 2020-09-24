@@ -1,0 +1,163 @@
+<% if @user.admin %>
+  <% provide(:title, "イベント作成ページ") %>
+<% else %>
+  <% provide(:title, @user.name) %>
+<% end %>
+
+<% if !current_user.admin || (@user.id != current_user.id) %>
+  <h1><%= l(@first_day, format: :middle) %>の稽古出席は <span style="border: 1px solid #000 ;"><%= @worked_sum %>回 </span>です</h1>
+<% elsif current_user.admin? %>
+  <h1><%= "イベント作成ページ" %></h1>
+<% end %>
+
+<div class="showtable">
+  <table class="table table-bordered table-condensed user-table">
+      <tr>
+        <td class="show-prof">
+          <%= link_to "←", user_path(date: @first_day.prev_month),class:"btn btn-xs btn-primary"%>
+          【<%= l(@first_day, format: :middle)%>】
+          <%= link_to "→", user_path(date: @first_day.next_month),class:"btn btn-xs btn-primary"%>
+        </td>
+      <% unless current_user.admin? || (@user.id != current_user.id) %>
+        <td class="show-prof">所属：<%= @user.affiliation %></td>
+        <td class="show-prof">階級：<%= @user.status %></td>
+        <td class="show-prof"><%= l(@first_day, format: :middle) %> 稽古出席数 【<%= @worked_sum %>】総数【<%= @worked_sums %>】</td>
+      <% end %>
+      </tr>
+  </table>
+</div>
+
+<div>
+  <% if @day.present? %>
+    <p><span class="info"><%= "#{@day} にお知らせがあります。" %></span></P>
+  <% end %>
+</div>
+
+<div>
+  <table class="table table-bordered table-condensed" id="table-attendances">
+    <thead>
+      <tr>
+        <th rowspan="3" width="100" class="th-show">日付</th>
+        <th rowspan="3" width="100" class="th-show">曜日</th>
+    <% if current_user.admin? %>
+        <th rowspan="3" width="200" class="th-show">イベント連絡</th>
+        <th class="th-show">イベント名</th>
+        <th class="th-show">確認状況</th>
+    <% elsif !current_user.admin? && (@user.id == current_user.id) %>
+        <th rowspan="3" width="200" class="th-show">出席登録</th>
+        <th class="th-show">出席道場</th>
+        <th class="th-show">出席クラス</th>
+        <th width="150" class="th-show">お知らせ</th>
+    <% end%>
+      </tr>
+    </thead>
+    <tbody>
+      <% @attendances.each do |day| %>
+        <tr>
+          <td><%= l(day.worked_on, format: :short) %></td><!--i18n localizeのlを使う 基本l(Date.today)でオプション指定なければdefault-->
+          <td>
+            <% if $days_of_the_week[day.worked_on.wday] == $days_of_the_week[0] %>
+              <span class="text_sun"><%= $days_of_the_week[day.worked_on.wday] %></span>
+            <% elsif $days_of_the_week[day.worked_on.wday] == $days_of_the_week[6]  %>
+              <span class="text_sat"><%= $days_of_the_week[day.worked_on.wday] %></span>
+            <% else %>
+              <%= $days_of_the_week[day.worked_on.wday] %>
+            <% end%>
+          </td>
+        <% if current_user.admin? %>
+          <td>
+            <% if day.worked_on >= Date.current %>
+              <%= link_to "イベント連絡", attendances_request_work_info_user_attendance_path(@user,day.id), remote: true,class:"btn btn-primary" %>
+            <% end %>
+          </td>
+          <td><%= Attendance.find(day.id).note %></td>
+          <td>
+            <% if Attendance.where.not(applying: nil).where(worked_on: day.worked_on).present? && (day.worked_on < Date.current) %>
+              <%= link_to("#{Attendance.where.not(applying: nil).where(worked_on: day.worked_on).count}件返事があります",confirm_approval_user_attendance_path(day.id,@user), class: "btn outline btn-primary", remote: true)%>
+            <% elsif Attendance.where.not(applying: nil).where(worked_on: day.worked_on).present? %>
+              <%= link_to("#{Attendance.where.not(applying: nil).where(worked_on: day.worked_on).count}件返事があります",confirm_approval_user_attendance_path(day.id,@user), class: "btn btn-primary", remote: true)%>
+            <% end %>
+          </td>
+        <% elsif !current_user.admin? && (@user.id == current_user.id) %>
+          <td>
+          <% if day.keiko_place.present? || day.attendance_class.present? %><!--ヘルパーでは引数はattendanceだが-->
+            <%="稽古出席"%><%#=day.id%>
+          <% end %>
+        </td>
+          <td><%= day.keiko_place %></td><!--出席道場-->
+          <td><%= day.attendance_class %></td><!--クラス-->
+          <td>
+            <% if day.applying.present? %><!-- attendance.noteが存在したら <%# if l(day.worked_on, format: :short).include?(l(@attendance.worked_on, format: :short)) %>-->
+              <%= link_to_if(!current_user.admin?,"通知済み",attendances_approval_work_info_user_path(@user,day_id: day.id), class: "btn outline btn-primary", remote: true)%>
+            <% elsif @day.include?(l(day.worked_on, format: :short)) %>
+              <%= link_to_if(!current_user.admin?,"お知らせ",attendances_approval_work_info_user_path(@user,day_id: day.id), class: "btn btn-primary", remote: true)%>
+            <% end %>
+          </td>
+        <% end %>
+        </tr>
+      <% end %><!--@attendances.each do |day|-->
+    </tbody>
+  </table>
+</div>
+
+<div id="showpage_top"><a class="btn btn-primary" href="#">head</a></div>
+
+<% unless current_user.admin || (@user.id != current_user.id) %>
+  <canvas id="myChart" width="900" height="400"></canvas>
+  <script>
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          /*labels:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],*/
+          labels:<%== @month%>,
+          datasets: [{
+              label: "稽古回数",
+              /*data: [{x: new Date(),y: 1}],*/
+              data:<%== @worked_sum_month %>,
+              backgroundColor: 'rgba(255, 99, 132, 1.0)',
+              borderColor: 'rgba(255, 50, 132, 1.0)',
+              fill: false
+          }]
+      },
+      options: {
+          title: {
+            display: true,
+            text: "<%= l(@first_day, format: :shortyear)%>稽古実績"},
+              scales: {
+                yAxes: [
+                {
+                  ticks: {
+                    /*beginAtZero: true,*/
+                    suggestedMin: 0,
+                    suggestedMax: 31,
+                    stepSize: 1
+                  }
+                }
+                ]
+              }
+          }
+      });
+  </script>
+<% end %>
+<!--scales:軸設定,ticks:メモリ,yAxes:y軸設定-->
+
+<div class="modal fade" id="request-work-info" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div class="modal fade" id="approval-work-info" tabindex="-2" role="dialog" aria-hidden="true"></div>
+<div class="modal fade" id="request-month-approval" tabindex="-2" role="dialog" aria-hidden="true"></div>
+<div class="modal fade" id="confirm-approval" tabindex="-2" role="dialog" aria-hidden="true"></div>
+
+<script type="text/javascript">
+
+  $(function(){
+    $('a[href^="#"]').click(function(){
+      var speed = 1000;
+      var href= $(this).attr("href");
+      var target = $(href == "#" || href == "" ? 'html' : href);
+      var position = target.offset().top - 60;
+      $("html, body").animate({scrollTop:position}, speed, "swing");
+      return false;
+    });
+  });
+
+</script>

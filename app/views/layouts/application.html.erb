@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= csrf_meta_tags %>
+    <%#= stylesheet_link_tag    'application', media: 'all','data-turbolinks-track': 'reload' %>
+                          
+    <%#= javascript_include_tag 'application','data-turbolinks-track': 'reload' %>
+    <%#= javascript_include_tag 'application'%>
+    <!-- HTML shimがこの1行で収まる -->
+    <%= render 'layouts/shim' %>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <%= favicon_link_tag('favicon.ico') %>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"><!--レスポンシブ設定-->
+    <%#= stylesheet_link_tag 'application',media: 'all' %>
+    <%= stylesheet_link_tag    "application", :debug => true, :media => "all" %>
+    <%= javascript_include_tag "application", :debug => true %>
+  </head>
+  <body>
+    <%= render 'layouts/header' %>
+    <div class="container">
+      <% flash.each do |message_type, msg| %>
+        <div class="alert alert-<%= message_type %>"><%= msg %></div>
+      <% end %>
+      <%= yield %>
+      <!--%= debug(params) if Rails.env.development? %-->
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  $('.nav-button').on('click',function(){
+    if( $(this).hasClass('active') ){
+      $(this).removeClass('active');
+      $('.nav-wrap').addClass('close').removeClass('open');
+    }else {
+      $(this).addClass('active');
+      $('.nav-wrap').addClass('open').removeClass('close'); 
+    }
+  });
+</script>
+
+
+

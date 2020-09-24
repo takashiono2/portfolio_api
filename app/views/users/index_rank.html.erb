@@ -1,0 +1,119 @@
+<% provide(:title, "出席順位") %>
+<h1>出席順位</h1>
+<div class="container">
+  <div class="row">
+      <div class="col-md-2"></div><!--左のスペース用のdiv-->
+      <div class="col-md-4">
+        <%= form_with(scope: :user, url: index_rank_users_path, method: :get, local: true)do |f| %>
+            <div class="form-group col-sm-2"></div><!--左のスペース用のdiv-->
+            <div class="form-group col-sm-10 radiogroup">
+                <%= radio_button_tag("num","1",("1" == params[:num]))%>
+                <%#= radio_button_tag("num","#{1}", (1 == params[:num]))%>
+                <%= f.label :user_month, "今月",class:'labelradio' %>
+                <%= radio_button_tag("num","2",("2" == params[:num]))%>
+                <%= f.label :user_beforemonth, "先月",class:'labelradio' %>
+                <%= radio_button_tag("num","3",("3" == params[:num]))%>
+                <%= f.label :user_sum, "総数",class:'labelradio' %>
+            <div class="form-group col-sm-2 pull-right">
+              <div class="actions"><%= f.submit '切り替え',:name => nil,id: :chagerank,class: "btn btn-info btn-sm"%></div>
+            </div>
+            </div>
+        <% end %>
+      </div>
+      <div class="col-md-2"></div><!--右のスペース用のdiv-->
+    </div>
+
+  <div class="row">
+    <div class="col-md-2"></div>
+      <div class="col-md-8">
+      <%= form_with(scope: :user, url: index_rank_users_path, method: :get,local: true)do |f| %>
+        <div class="form-row">
+          <div class="form-group col-sm-3">
+            <label for="text4a">所属道場</label>
+            <div class="form-inline"><%= f.select :affiliation,[['伏見道場', '伏見道場'],['田辺道場', '田辺道場'],['宇治教室', '宇治教室'],['ルネサンス山科教室', 'ルネサンス山科教室']],{include_blank: true,selected:' '},{class: "form-control"}%></div>
+          </div>
+          <div class="form-group col-sm-3">
+            <label for="text4b">クラス</label>
+            <div class="form-inline"><%= f.select :department,[['一般クラス', '一般クラス'],['少年クラス', '少年クラス']],{include_blank: true,selected:' '},{class: "form-control"} %></div>
+          </div>
+          <div>
+            <div class="form-group col-sm-2">
+            <label></label>
+            <div class="actions">
+              <%= f.submit '検索',:name => nil,id: :searchbutton,class: "btn btn-dark" %>
+              <%= hidden_field_tag :num, params[:num] %>
+            </div>
+          </div>
+      <% end %>
+      <%= form_with(scope: :user, url: index_rank_users_path, method: :post, remote: true,id: :"ajax_rank")do |f| %>
+          <div class="form-group col-sm-2 pull-right">
+            <label></label>
+            <div class="clear-rank"><%= link_to 'クリア', index_rank_users_path,id: :clearbutton,class: 'btn btn-success' %></div>
+          </div>
+        </div>
+      <% end %>
+          <table class="rank">
+            <tr>
+              <th>順位</th>
+              <th>会員名</th>
+              <th>所属道場</th>
+              <th>クラス</th>
+              <th>
+                <%= "" if @params.blank? %>
+                <%= "今月" if @params == "1" || params["num"]=="1" || params["num"].blank? %>
+                <%= "先月" if @params == "2" || params["num"]=="2" %>
+                <%= "総数" if @params == "3" || params["num"]=="3" %>
+              </th>
+            </tr>
+              <% if @users_m %>
+                <%= render partial:'index_ranking',locals: { users: @users_m } %>
+              <% elsif @users_lastm %>
+                <%= render partial:'index_ranking',locals: { users: @users_lastm } %>
+              <% elsif @users_sum %>
+                <%= render partial:'index_ranking',locals: { users: @users_sum} %>
+              <% else %>
+                <%= render partial:'index_ranking',locals: { users: @users } %>
+              <% end %>
+          </table>
+      </div>
+  </div>
+    <div class="col-md-2"></div>
+</div>
+
+
+<script>
+  // $(function() {
+  //     $('input[name="fruit"]:radio').change(function(){
+  //         var val = $(this).val();
+        
+  //         if(val== 1){
+  //             $('#result').text("今月");
+  //         } else if(val == 2)  {
+  //             $('#result').text("先月");
+  //         } else if(val == 3) {
+  //             $("#result").text("総数");
+  //         }
+  //     });
+  // });
+$(function(){
+   $('#chagerank').submit( function() {
+      $('.test_1').html('<p>こんにちは</p>');
+//       else if(val == "2"){
+//           $(this).attr('checked','checked');
+//         }  
+//       else if(val == "3"){
+//           $(this).attr('checked','checked');
+//         }
+//         // $('.disabled').removeAttr('disabled');
+//         // $('.other_label').removeClass('disabled');
+//       // }else if(val == "2"){
+//       // }else if(val == "3"){
+//       // }else{
+//       //   $('#inputother').attr('disabled','disabled');
+//       //   $('.other_label').addClass('disabled');
+   });
+ });
+</script>
+
+<!--$( '#agree' ).attr( 'checked', 'checked' );オンにする-->
+<!--$( '#agree' ).removeAttr( 'checked' );オフにする-->

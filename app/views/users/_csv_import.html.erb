@@ -1,0 +1,60 @@
+<%= form_tag csv_import_users_path, method: :post, multipart: true do %>
+  <div class="input-group">
+      <%= button_tag 'ファイル選択', class: "btn btn-secondary btn-sm" ,type: 'button', onclick: "$('#file_input').click();" %>
+      <%= file_field_tag :file ,id: "file_input",style: "display: none;",onchange: "file_selected($(this));"%><!--display: none;にしてlabel側でデザイン-->
+      <%= text_field_tag 'filename',"",{id: "filename", disabled: true ,style: "width: 198px; height: 32px;"} %><!--readonlyではクリックに反応するので、disabled: true,-->
+        <div class="csv_submit" >
+          <%= submit_tag "CSVをインポート",class: "btn btn-info btn-sm w-25" %>
+        </div>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  function file_selected(file_field){
+    var filename = $(file_field)[0].files[0].name;
+    $("#filename").val(filename);
+  }
+</script>
+
+<!--span class="btn btn-secondary btn-sm">ファイルを選択<!--ファイルフィールド作成-->
+
+<!--
+<div class="csv_holder">
+  <%#= form_tag import_users_path, method: :post, multipart: true do |f| %>
+    <div class="search_item">
+      <%#= submit_tag 'ファイル選択', class: %i(csv_input_btn), type: 'button', onclick: "$('#file_input').click();" %>
+      <%#= text_field_tag 'filename',"", id: "filename", disabled: true %>
+      <%#= file_field_tag :file, id: "file_input", style: "display: none;", onchange: "file_selected($(this));" %>
+    </div>
+    <div>
+      <#%= submit_tag "CSVインポート", class: "btn btn-primary" %>
+    </div>
+  <%# end %>
+<div>
+-->
+<!--
+<h4>Input Groups</h4>
+            <div class="input-group">
+                <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse&hellip; <input type="file" style="display: none;" multiple>
+                    </span>
+                </label>
+                <input type="text" class="form-control" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
+-->
+<!--
+<%#= form_tag csv_import_users_path, method: :post, multipart: true do %>
+<div class="input-group-btn">
+  <label class="input-group-btn">
+        <span class="btn btn-secondary btn-sm">ファイル選択
+          <%#= file_field_tag :file ,id: "file_input",style: "display: none;" ,onclick: "$(this).click();" %>
+        </span><!--display: none;にしてlabel側でデザイン-->
+        <%#= text_field_tag 'filename',"",{id: "filename", disabled: true ,style: "width: 190px; height: 32px;",onchange: "file_selected($('#file_input'));"} %><!--readonlyではクリックに反応するので、disabled: true,-->
+  <!--</label>-->
+<!--</div>
+https://www.uosansatox.biz/entry/2018/02/14/152734-->

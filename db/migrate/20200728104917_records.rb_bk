@@ -1,0 +1,15 @@
+class Records < ActiveRecord::Migration[5.1]
+  
+  #def change#これだと、SQLite3::SQLException: no such table: tasksエラーがでた
+    #drop_table :tasks
+  #end
+  
+  def up
+    drop_table :tasks
+  end
+  
+  def down
+    fail ActiveRecord::IrreversibleMigration
+  end
+  
+end

@@ -1,0 +1,58 @@
+<% provide(:title, '会員一覧') %>
+<% provide(:button_text, "更新") %>
+
+<h1>会員一覧</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1"></div><!--余白スペース用-->
+        <div class="col-md-5">
+          <div><%= render 'csv_import' %></div>
+        </div>
+        
+        <div class="col-md-5">
+          <%= form_with(url: users_path, method: :get, local: true) do |f| %>
+ 
+            <div style="display:inline-flex"> 
+              <div><%= f.text_field :name ,class: "form-control name-form", placeholder: '名前を入力' %></div>
+              <div><%= f.submit '検索' ,class: "btn btn-dark name-serach" %></div>
+              <div><%= link_to 'クリア', users_path,class: 'btn btn-success' %></div>
+            </div>
+          <% end %>
+
+        </div>
+      <div class="col-md-1"></div><!--余白スペース用-->
+      
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <%#= will_paginate %>
+            <table class="table table-condensed table-hover" id="table-users">
+  
+              <% @users.each do |user| %>
+                <tr>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                     <% if current_user.admin? && !current_user?(user) %>
+                     <%= user.name %>
+                          <li class="well well-sm">
+                            <button type="button" class="btn btn-light index-edit" data-toggle="collapse" data-target="#demo<%= user.id %>">編集する</button>
+                              <div id="demo<%= user.id %>" class="collapse">
+                                <div class="row">
+                                  <div class="col-md-6 col-md-offset-3">
+                                    <%= render partial: 'form2', locals: {user: user} %><!--patialを明示、lacalsを使う場合省略不可-->
+                                  </div>
+                                </div>
+                                <div style="text-align: right;">
+                                  <%= link_to "削除", user, method: :delete,data: { confirm: "削除してよろしいですか？" } ,class: "btn btn-danger" %>
+                                </div>
+                              </div>
+                          </li>
+                      <% end %><!--ifのend-->
+                    </ul>
+                 
+                </tr>
+              <% end %><!--eachのend-->
+              
+            </table>
+          <%#= will_paginate %>
+        </div><!--serch_nameのend-->
+    </div><!--rowのend-->
+</div><!--containerのend-->

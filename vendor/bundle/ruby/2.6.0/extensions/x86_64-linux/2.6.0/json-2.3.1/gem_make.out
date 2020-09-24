@@ -1,0 +1,13 @@
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/json-2.3.1/ext/json
+/home/ec2-user/.rvm/rubies/ruby-2.6.3/bin/ruby -I /home/ec2-user/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0 -r ./siteconf20200903-4700-1o4mysk.rb extconf.rb
+creating Makefile
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/json-2.3.1/ext/json
+make "DESTDIR=" clean
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/json-2.3.1/ext/json
+make "DESTDIR="
+make: Nothing to be done for `all'.
+
+current directory: /home/ec2-user/environment/kinataiA/vendor/bundle/ruby/2.6.0/gems/json-2.3.1/ext/json
+make "DESTDIR=" install

@@ -1,0 +1,45 @@
+<% provide(:title) %>
+<% provide(:button_text, '更新') %>
+<h1>会報編集ページ</h1>
+<div class="container">
+  <div class="row">
+    
+    <div class="col-md-8 col-md-offset-2">
+      <%= form_with(model: @post, multipart: true,local: true) do |f| %>
+        <%= render 'shared/error_messages', model: @post%>
+      
+        <%= f.label :post_num ,class:'ck_box_form'%>
+        <%= f.number_field :post_num,{class: "form-control",min: 1, max: 999,readonly: true} %>
+        
+        <%= f.label :post_title ,class:'ck_box_form'%>
+        <%= f.text_field :post_title, class: "form-control" %>
+    
+        <%= f.label :post_note ,class:'ck_box_form'%>
+        <%= f.text_area :post_note, class: "form-control" %>
+  
+      <div class="row1">
+        
+        <% @thumbnail_ids.each_with_index do |thum_id,i| %>
+          <div class="ck_box_form"><%= "画像#{i+1}"%>
+            <%= check_box_tag "check[#{thum_id}][]",true,false,{class: "ck_box"} %>
+            <%= label_tag :editimg, '削除',{class: 'ck_box_delete'}%>
+          </div>
+            <%= image_tag @post.thumbnails.find(thum_id).image.url(:thumb),class: "editimg" if @post.thumbnails.find(thum_id).image.url.present?%>
+        <% end %>
+      
+      </div>
+  
+      <div class="row2">
+        <div class="imagefilefield col-md-12">
+          <%= f.fields_for :thumbnails do |thumb| %>
+            <div><%= f.label :"画像 #{thumb.index+1}"%><%=" [5MBまで] "%></div>
+            <div><%= thumb.file_field :image ,multipart: true, accept: 'image/jpeg,image/gif,image/png' %></div>
+          <% end %>
+        </div> 
+        </div>  
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)} indexupdate" %>
+        </div>
+      <% end %>
+    
+  </div>
+</div>

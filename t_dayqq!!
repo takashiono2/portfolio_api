@@ -1,0 +1,16 @@
+
+[1mFrom:[0m /home/ec2-user/environment/kintai/app/controllers/users_controller.rb:115 UsersController#csv_index:
+
+    [1;34m113[0m: [32mdef[0m [1;34mcsv_index[0m[1;34m#csv出力[0m
+    [1;34m114[0m:   @first_day = params[[33m:date[0m].nil? ? [1;34;4mDate[0m.current.beginning_of_month : params[[33m:date[0m].to_date
+ => [1;34m115[0m: binding.pry
+    [1;34m116[0m:   respond_to [32mdo[0m |format|[1;34m#ファイルの出力処理[0m
+    [1;34m117[0m:     format.html [32mdo[0m[1;34m#html用の処理を書く[0m
+    [1;34m118[0m:     [32mend[0m 
+    [1;34m119[0m:     format.csv [32mdo[0m[1;34m#csv用の処理を書く[0m
+    [1;34m120[0m:       filename = [1;34;4mERB[0m::[1;34;4mUtil[0m.url_encode([31m[1;31m"[0m[31m#{@user.name}[0m[31mの#{@first_day.strftime([1;31m"[0m[31m%Y年%m月[1;31m"[0m[31m[0m[31m)}[0m[31mの勤怠情報一覧.csv[1;31m"[0m[31m[0m)[1;34m#引数に渡された文字列をURLエンコード[0m
+    [1;34m121[0m:       send_data render_to_string, [35mfilename[0m: filename, [35mtype[0m: [33m:csv[0m[1;34m#csvデータに変換し、ダウンロードできる[0m
+    [1;34m122[0m:     [32mend[0m
+    [1;34m123[0m:   [32mend[0m
+    [1;34m124[0m: [32mend[0m
+
